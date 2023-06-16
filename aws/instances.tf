@@ -1,5 +1,19 @@
+data "aws_ami" "amazonlinux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-kernel-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 resource "aws_instance" "public" {
-  ami                         = data.aws_ami.amzn-linux-2023-ami.id
+  ami                         = data.aws_ami.amazonlinux.id
   instance_type               = "t3.micro"
   associate_public_ip_address = true
   key_name                    = "main" #key pair name (created manually)
@@ -15,7 +29,7 @@ resource "aws_instance" "public" {
 resource "aws_security_group" "public" {
   name        = "${var.env_code}-public"
   description = "Allow inbound traffic"
-  vpc_id         = aws_vpc.my_vpc.id
+  vpc_id      = aws_vpc.my_vpc.id
 
   ingress {
     description = "SSH from public"
@@ -38,11 +52,11 @@ resource "aws_security_group" "public" {
 }
 
 resource "aws_instance" "private" {
-  ami                         = data.aws_ami.amzn-linux-2023-ami.id
-  instance_type               = "t3.micro"
-  key_name                    = "main" #key pair name (created manually)
-  vpc_security_group_ids      = [aws_security_group.private.id]
-  subnet_id                   = aws_subnet.private[0].id #using existing subnet from aws_vpc
+  ami                    = data.aws_ami.amazonlinux.id
+  instance_type          = "t3.micro"
+  key_name               = "main" #key pair name (created manually)
+  vpc_security_group_ids = [aws_security_group.private.id]
+  subnet_id              = aws_subnet.private[0].id #using existing subnet from aws_vpc
 
 
   tags = {
@@ -52,7 +66,7 @@ resource "aws_instance" "private" {
 resource "aws_security_group" "private" {
   name        = "${var.env_code}-private"
   description = "Allow VPC traffic"
-  vpc_id         = aws_vpc.my_vpc.id
+  vpc_id      = aws_vpc.my_vpc.id
 
   ingress {
     description = "SSH from VPC"

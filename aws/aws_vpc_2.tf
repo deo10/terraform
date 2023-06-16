@@ -1,12 +1,5 @@
-# Define the provider (AWS in this case)
-provider "aws" {
-  region = "us-east-1" # Change to your desired region
-}
-
-# Define az
-locals {
-
-  availability_zones = ["us-east-1a", "us-east-1b"]
+data "aws_availability_zones" "available" { #taking all available AZ from the region that is mentioned in provider.tf
+  state = "available"
 }
 
 # Create the VPC
@@ -33,7 +26,7 @@ resource "aws_subnet" "public" {
 
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = var.public_cidr[count.index]          # will use values in locals-public_cidr
-  availability_zone       = local.availability_zones[count.index] # will use values in locals-azs
+  availability_zone       = data.aws_availability_zones.available.names[count.index] # will use values from data az
   map_public_ip_on_launch = true
 
   tags = {
@@ -47,7 +40,7 @@ resource "aws_subnet" "private" {
 
   vpc_id            = aws_vpc.my_vpc.id
   cidr_block        = var.private_cidr[count.index]         # will use values in locals-public_cidr
-  availability_zone = local.availability_zones[count.index] # will use values in locals-azs
+  availability_zone = data.aws_availability_zones.available.names[count.index] # will use values in date-azs
 
   tags = {
     Name = "${var.env_code}-private${count.index + 1}"
