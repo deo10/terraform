@@ -2,7 +2,7 @@ provider "null" {}
 
 resource "null_resource" "create_file" {
   provisioner "local-exec" {
-    command = "echo 'Hello, Terraform!' > ${var.file_path}"
+    command     = "echo 'Hello, Terraform!' > ${var.file_path}"
     interpreter = ["cmd", "/C"]
   }
 
