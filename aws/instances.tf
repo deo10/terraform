@@ -2,9 +2,9 @@ resource "aws_instance" "public" {
   ami                         = data.aws_ami.amzn-linux-2023-ami.id
   instance_type               = "t3.micro"
   associate_public_ip_address = true
-  key_name                    = "main"
-  vpc_security_group_ids      = []
-  subnet_id                   = [aws_subnet.public[0].id] #using existing subnet
+  key_name                    = "main" #key pair name (created manually)
+  vpc_security_group_ids      = [aws_security_group.public.id]
+  subnet_id                   = aws_subnet.public[0].id #using existing subnet from aws_vpc
 
 
   tags = {
@@ -15,7 +15,7 @@ resource "aws_instance" "public" {
 resource "aws_security_group" "public" {
   name        = "${var.env_code}-public"
   description = "Allow inbound traffic"
-  vpc         = aws_vpc.main.id
+  vpc_id         = aws_vpc.my_vpc.id
 
   ingress {
     description = "SSH from public"
