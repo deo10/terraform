@@ -1,3 +1,4 @@
+
 data "aws_availability_zones" "available" { #taking all available AZ from the region that is mentioned in provider.tf
   state = "available"
 }
@@ -25,7 +26,7 @@ resource "aws_subnet" "public" {
   count = length(var.public_cidr) # will count number of values in locals-public_cidr
 
   vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.public_cidr[count.index]          # will use values in locals-public_cidr
+  cidr_block              = var.public_cidr[count.index]                             # will use values in locals-public_cidr
   availability_zone       = data.aws_availability_zones.available.names[count.index] # will use values from data az
   map_public_ip_on_launch = true
 
@@ -39,7 +40,7 @@ resource "aws_subnet" "private" {
   count = length(var.private_cidr)
 
   vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = var.private_cidr[count.index]         # will use values in locals-public_cidr
+  cidr_block        = var.private_cidr[count.index]                            # will use values in locals-private_cidr
   availability_zone = data.aws_availability_zones.available.names[count.index] # will use values in date-azs
 
   tags = {
