@@ -1,4 +1,4 @@
-#Making tf state remote on S3, db to lock state, both created manually
+#Making tf state remote on S3, db to lock state, both created by files in remote-state folder
 terraform {
   backend "s3" {
     bucket = "my-tf-test-bucket"
