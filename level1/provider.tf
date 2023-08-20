@@ -2,7 +2,7 @@
 terraform {
   backend "s3" {
     bucket = "my-tf-test-bucket"
-    key    = "terraform.tfstate"
+    key    = "level1.tfstate"
     region = "us-east-1"
     dynamodb_table = "terraform-remote-state"
   }

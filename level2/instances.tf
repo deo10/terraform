@@ -18,7 +18,7 @@ resource "aws_instance" "public" {
   associate_public_ip_address = true
   key_name                    = "main" #key pair name (created manually)
   vpc_security_group_ids      = [aws_security_group.public.id]
-  subnet_id                   = aws_subnet.public[0].id #using existing subnet from aws_vpc
+  subnet_id                   = data.terraform_remote_state.level1.outputs.public_subnet_id[0] #using existing subnet from outputs in level1
   user_data                   = file["user_data.sh"]    #apply sh script on ec2 instance
 
 
@@ -30,7 +30,7 @@ resource "aws_instance" "public" {
 resource "aws_security_group" "public" {
   name        = "${var.env_code}-public"
   description = "Allow inbound traffic"
-  vpc_id      = aws_vpc.my_vpc.id #using vpc from aws_vpc_2.tf
+  vpc_id      = data.terraform_remote_state.level1.ouputs.vpc_id #using vpc from level1 outputs
 
   ingress {
     description = "SSH from public"
@@ -65,7 +65,7 @@ resource "aws_instance" "private" {
   instance_type          = "t3.micro"
   key_name               = "main" #key pair name (created manually)
   vpc_security_group_ids = [aws_security_group.private.id]
-  subnet_id              = aws_subnet.private[0].id #using existing subnet from aws_vpc
+  subnet_id              = data.terraform_remote_state.level1.outputs.private_subnet_id[0] #using existing subnet from aws_vpc
 
 
   tags = {
@@ -75,14 +75,14 @@ resource "aws_instance" "private" {
 resource "aws_security_group" "private" {
   name        = "${var.env_code}-private"
   description = "Allow VPC traffic"
-  vpc_id      = aws_vpc.my_vpc.id
+  vpc_id      = data.terraform_remote_state.level1.ouputs.vpc_id #using vpc from level1 outputs
 
   ingress {
     description = "SSH from VPC"
     from_port   = 22 #Adding a port range from to
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr] #using VPC cidr from variables
+    cidr_blocks = [data.terraform_remote_state.level1.outputs.vpc_cidr] #using VPC cidr from outputs level1
   }
 
   egress {
