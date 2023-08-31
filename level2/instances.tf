@@ -34,13 +34,13 @@ resource "aws_security_group" "public" {
   description = "Allow inbound traffic"
   vpc_id      = data.terraform_remote_state.level1.ouputs.vpc_id #using vpc from level1 outputs
 
-  ingress {
+  /*   ingress {
     description = "SSH from public"
     from_port   = 22 #Adding a port range from to
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["109.201.178.180/32"] #check and add your public IP here 
-  }
+  } */ #commented as a part of implementing Session Manager
 
   ingress {
     description     = "Webserver access HTTP from public"
@@ -90,13 +90,13 @@ resource "aws_security_group" "private" {
   description = "Allow VPC traffic"
   vpc_id      = data.terraform_remote_state.level1.ouputs.vpc_id #using vpc from level1 outputs
 
-  ingress {
+  /* ingress {
     description = "SSH from VPC"
     from_port   = 22 #Adding a port range from to
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [data.terraform_remote_state.level1.outputs.vpc_cidr] #using VPC cidr from outputs level1
-  }
+  } */ # commented as a part of implementing Session Manager
 
   ingress {
     description     = "Webserver access HTTP from loadbalancer"
@@ -121,12 +121,13 @@ resource "aws_security_group" "private" {
 #Autoscaling
 
 resource "aws_launch_configuration" "main" {
-  name_prefix     = "${var.env_code}-private"
-  image_id        = data.aws_ami.amazonlinux
-  instance_type   = "t2.micro"
-  security_groups = [aws_security_group.private]
-  user_data       = file("user_data.sh")
-  key_name        = "main"
+  name_prefix          = "${var.env_code}-private"
+  image_id             = data.aws_ami.amazonlinux
+  instance_type        = "t2.micro"
+  security_groups      = [aws_security_group.private]
+  user_data            = file("user_data.sh")
+  iam_instance_profile = aws_iam_instance_profile.main.name #as a part of implementing Session Manager
+  #key_name        = "main" #as a part of implementing Session Manager
 }
 
 resource "aws_autoscaling_group" "main" {
