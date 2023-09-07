@@ -48,7 +48,7 @@ resource "aws_instance" "private" {
   instance_type          = "t3.micro"
   key_name               = "main" #key pair name (created manually)
   vpc_security_group_ids = [aws_security_group.private.id]
-  subnet_id              = var.private_subnet_id[count.index]  #using existing subnet from aws_vpc
+  subnet_id              = var.private_subnet_id[count.index]  #using existing subnet from vpc module
   user_data              = file["$(path.module)/user_data.sh"] #apply sh script on ec2 instance
 
 
@@ -96,7 +96,7 @@ resource "aws_launch_configuration" "main" {
   image_id             = var.ami_id
   instance_type        = "t2.micro"
   security_groups      = [aws_security_group.private]
-  user_data            = file("user_data.sh")
+  user_data            = file["$(path.module)/user_data.sh"]
   iam_instance_profile = aws_iam_instance_profile.main.name #as a part of implementing Session Manager
   #key_name        = "main" #as a part of implementing Session Manager
 }
