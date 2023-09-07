@@ -18,10 +18,10 @@ resource "aws_internet_gateway" "my_igw" {
 
 # Create the public subnets
 resource "aws_subnet" "public" {
-  count = length(var.public_cidr) # will count number of values in locals-public_cidr
+  count = length(var.public_cidr) # will count number of values in public_cidr
 
   vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = var.public_cidr[count.index]        # will use values in locals-public_cidr
+  cidr_block              = var.public_cidr[count.index]        # will use values in public_cidr
   availability_zone       = var.availability_zones[count.index] # will use values from module config
   map_public_ip_on_launch = true
 
@@ -35,7 +35,7 @@ resource "aws_subnet" "private" {
   count = length(var.private_cidr)
 
   vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = var.private_cidr[count.index]       # will use values in locals-private_cidr
+  cidr_block        = var.private_cidr[count.index]       # will use values in private_cidr
   availability_zone = var.availability_zones[count.index] # will use values from module config
 
   tags = {
