@@ -102,9 +102,9 @@ resource "aws_nat_gateway" "nat_gateway2" {
 
 # Create the Elastic IPs for the NAT gateways
 resource "aws_eip" "nat_eip1" {
-  vpc = true
+  domain = "vpc"
 }
 
 resource "aws_eip" "nat_eip2" {
-  vpc = true
+  domain = "vpc"
 }
