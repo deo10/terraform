@@ -45,6 +45,7 @@ resource "aws_subnet" "private" {
 
 # Create the route tables
 resource "aws_route_table" "public" {
+  count  = length(var.public_cidr)
   vpc_id = aws_vpc.my_vpc.id
 
   route {
@@ -76,11 +77,7 @@ resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
 
   subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public.id
-
-  tags = {
-    Name = "${var.env_code}-public${count.index + 1}"
-  }
+  route_table_id = aws_route_table.public[count.index].id
 }
 
 resource "aws_route_table_association" "private" {
@@ -88,17 +85,13 @@ resource "aws_route_table_association" "private" {
 
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
-
-  tags = {
-    Name = "${var.env_code}-private${count.index + 1}"
-  }
 }
 
 # Create the Elastic IPs for the NAT gateways
 resource "aws_eip" "nat" {
   count = length(var.public_cidr)
 
-  vpc = true
+  domain = "vpc"
 
   tags = {
     Name = "${var.env_code}-eip${count.index + 1}"
