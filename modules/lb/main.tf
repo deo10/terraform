@@ -28,7 +28,7 @@ resource "aws_lb" "main" {
   name               = "${var.env_code}-load-balancer"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.load-balancer] #using sg created in the same file
+  security_groups    = [aws_security_group.load-balancer.id] #using sg created in the same file
   subnets            = var.public_subnet_id               #using variables from module config
 
   tags = {
@@ -45,7 +45,7 @@ resource "aws_lb_target_group" "main" {
   health_check {
     enabled             = true
     path                = "/"
-    port                = "traffic port"
+    port                = "traffic-port"
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 5
