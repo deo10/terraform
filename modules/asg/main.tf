@@ -1,46 +1,4 @@
 #creating EC2 instances
-
-resource "aws_security_group" "public" {
-  name        = "${var.env_code}-public"
-  description = "Allow inbound traffic"
-  vpc_id      = var.vpc_id #using vpc from module config
-
-  /*   ingress {
-    description = "SSH from public"
-    from_port   = 22 #Adding a port range from to
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["109.201.178.180/32"] #check and add your public IP here 
-  } */ #commented as a part of implementing Session Manager
-
-  ingress {
-    description     = "Webserver access HTTP from public"
-    from_port       = 80 #Adding a port range from to
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = var.lb_security_group_id
-  }
-
-  ingress {
-    description = "Webserver access HTTP from loadbalancer"
-    from_port   = 80 #Adding a port range from to
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] #open widly
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.env_code}-public"
-  }
-}
-
 resource "aws_instance" "private" {
   count = 2
 
@@ -56,6 +14,7 @@ resource "aws_instance" "private" {
     Name = "${var.env_code}-private" #using env var from variables.tf
   }
 }
+
 resource "aws_security_group" "private" {
   name        = "${var.env_code}-private"
   description = "Allow VPC traffic"
@@ -74,7 +33,7 @@ resource "aws_security_group" "private" {
     from_port       = 80 #Adding a port range from to
     to_port         = 80
     protocol        = "tcp"
-    security_groups = var.lb_security_group_id
+    security_groups = [var.lb_security_group_id]
   }
 
   egress {
@@ -99,27 +58,26 @@ resource "aws_launch_configuration" "main" {
   user_data            = file("${path.module}/user_data.sh")
   iam_instance_profile = aws_iam_instance_profile.main.name #as a part of implementing Session Manager
   #key_name        = "main" #as a part of implementing Session Manager
-
-  #adding tags on instances that is lauching
-   tags = [
-    {
-      key                 = "Name"
-      value               = var.env_code
-      propagate_at_launch = true
-    },
-    # Add more tags if needed
-  ]
+  
 }
 
 resource "aws_autoscaling_group" "main" {
-  name             = "${var.env_code}-private"
+  name             = var.env_code
   min_size         = 2
   desired_capacity = 2
   max_size         = 4
 
-  target_group_arns    = var.target_group_arn #all instances are under loadbalancer
+  target_group_arns    = [var.target_group_arn] #all instances are under loadbalancer
   launch_configuration = aws_launch_configuration.main.name
   vpc_zone_identifier  = var.private_subnet_id #created in private subnet 
+
+  #adding tags on instances that is lauching
+  tag {
+      key                 = "Name"
+      value               = var.env_code
+      propagate_at_launch = true
+    }
+    # Add more tags if needed
 }
 
 
