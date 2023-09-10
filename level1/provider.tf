@@ -1,10 +1,9 @@
 #Making tf state remote on S3, db to lock state, both created by files in remote-state folder
 terraform {
   backend "s3" {
-    bucket         = "my-tf-test-bucket"
-    key            = "level1.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "terraform-remote-state"
+    bucket         = "my-tf-test-bucket-panov"
+    key            = "level1.tfstate"    
+    #dynamodb_table = "terraform-remote-state"
   }
 }
 
