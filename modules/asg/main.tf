@@ -49,7 +49,7 @@ resource "aws_instance" "private" {
   key_name               = "main" #key pair name (created manually)
   vpc_security_group_ids = [aws_security_group.private.id]
   subnet_id              = var.private_subnet_id[count.index]  #using existing subnet from vpc module
-  user_data              = file["$(path.module)/user_data.sh"] #apply sh script on ec2 instance
+  user_data              = file("${path.module}/user_data.sh") #apply sh script on ec2 instance
 
 
   tags = {
@@ -96,9 +96,19 @@ resource "aws_launch_configuration" "main" {
   image_id             = var.ami_id
   instance_type        = "t2.micro"
   security_groups      = [aws_security_group.private]
-  user_data            = file["$(path.module)/user_data.sh"]
+  user_data            = file("${path.module}/user_data.sh")
   iam_instance_profile = aws_iam_instance_profile.main.name #as a part of implementing Session Manager
   #key_name        = "main" #as a part of implementing Session Manager
+
+  #adding tags on instances that is lauching
+   tags = [
+    {
+      key                 = "Name"
+      value               = var.env_code
+      propagate_at_launch = true
+    },
+    # Add more tags if needed
+  ]
 }
 
 resource "aws_autoscaling_group" "main" {
@@ -109,22 +119,15 @@ resource "aws_autoscaling_group" "main" {
 
   target_group_arns    = var.target_group_arn #all instances are under loadbalancer
   launch_configuration = aws_launch_configuration.main.name
-  vpc_zone_identifier  = var.private_subnet_id #created in private subnet
-
-  #adding tags on instances that is lauching
-  tags = {
-    key                 = "Name"
-    value               = var.env_code
-    propagate_at_launch = true
-  }
+  vpc_zone_identifier  = var.private_subnet_id #created in private subnet 
 }
 
 
 #IAM part
 resource "aws_iam_role" "main" {
-  name                      = var.env_code
-  managed_policy_arns       = ["arn:aws:iam:aws:policy/service-role/AmazonEC2RoleforSSM"]
-  assume_assume_role_policy = <<EOF
+  name                = var.env_code
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"]
+  assume_role_policy  = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
