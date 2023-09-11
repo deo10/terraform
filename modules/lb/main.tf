@@ -67,8 +67,8 @@ resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
   port              = 80 #443
   protocol          = "HTTP" #"HTTPS"
-  certificate_arn   = aws_acm_certificate.main.arn #as a part of ACM implementation
-  ssl_policy        = "ELBSecurityPolicy-2016-00" #as a part of ACM implementation
+  # certificate_arn   = aws_acm_certificate.main.arn #as a part of ACM implementation
+  # ssl_policy        = "ELBSecurityPolicy-2016-00" #as a part of ACM implementation
 
   default_action {
     type             = "forward"
@@ -77,46 +77,46 @@ resource "aws_lb_listener" "main" {
 }
 
 #DNS part
-data "aws_route53_zone" "main" {
-  name = "dns_name_here.net"
-}
+# data "aws_route53_zone" "main" {
+#   name = "dns_name_here.net"
+# }
 
-resource "aws_route53_record" "www" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = "www.${data.aws_route53_zone.main.name}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = [aws_lb.main.dns_name]
-}
+# resource "aws_route53_record" "www" {
+#   zone_id = data.aws_route53_zone.main.zone_id
+#   name    = "www.${data.aws_route53_zone.main.name}"
+#   type    = "CNAME"
+#   ttl     = "300"
+#   records = [aws_lb.main.dns_name]
+# }
 
-#ACM - Amazon Certificate Manager to gain SSL cert
-resource "aws_acm_certificate" "main" {
-  domain_name = "www.${data.aws_route53_zone.main.name}"
-  validation_method = "DNS"
+# #ACM - Amazon Certificate Manager to gain SSL cert
+# resource "aws_acm_certificate" "main" {
+#   domain_name = "www.${data.aws_route53_zone.main.name}"
+#   validation_method = "DNS"
 
-  tags = {
-    Name = var.env_code 
-  }
-}
+#   tags = {
+#     Name = var.env_code 
+#   }
+# }
 
-resource "aws_route53_record" "main" {
-  for_each = {
-    for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    } 
-  }
+# resource "aws_route53_record" "main" {
+#   for_each = {
+#     for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
+#       name   = dvo.resource_record_name
+#       record = dvo.resource_record_value
+#       type   = dvo.resource_record_type
+#     } 
+#   }
   
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.main.zone_id
-}
+#   allow_overwrite = true
+#   name            = each.value.name
+#   records         = [each.value.record]
+#   ttl             = 60
+#   type            = each.value.type
+#   zone_id         = data.aws_route53_zone.main.zone_id
+# }
 
-resource "aws_acm_certificate_validation" "main" {
-  certificate_arn         = aws_acm_certificate.main.arn
-  validation_record_fqdns = [for record in aws_route53_record.main : record.fqdn]
-}
+# resource "aws_acm_certificate_validation" "main" {
+#   certificate_arn         = aws_acm_certificate.main.arn
+#   validation_record_fqdns = [for record in aws_route53_record.main : record.fqdn]
+# }
