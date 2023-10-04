@@ -19,7 +19,7 @@ resource "aws_security_group" "this" {
   }
 
   tags = {
-    name = "${var.engine}-rds"
+    name = "${var.env_code}-rds"
   }
 }
 
@@ -32,8 +32,8 @@ resource "aws_db_instance" "this" {
   username = "admin"
   password = var.rds_password
   multi_az = true
-  db_subnet_group_name = 
-  vpc_security_group_ids = []
+  db_subnet_group_name = aws_db_subnet_group.this.name
+  vpc_security_group_ids = [aws_security_group.this.id]
   backup_retention_period = 35
   backup_window = "21:00-23:00"
   skip_final_snapshot = true
