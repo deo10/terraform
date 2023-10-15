@@ -1,7 +1,8 @@
 #using aws secret manager and manually created secret for RDS
-data "aws_secretsmanager_secrets" "rds_password" {
-    name = "main/rds/password"
+data "aws_secretsmanager_secret" "rds_password" {
+  name = "example"
 }
+
 data "aws_secretsmanager_secret_version" "rds_password" {
     secret_id = data.aws_secretsmanager_secret.rds_password.id
 }
