@@ -29,7 +29,7 @@ resource "aws_lb" "main" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load-balancer.id] #using sg created in the same file
-  subnets            = var.public_subnet_id               #using variables from module config
+  subnets            = var.public_subnet_id                  #using variables from module config
 
   tags = {
     Name = "${var.env_code}-load-balancer" #using env var from variables.tf
@@ -39,7 +39,7 @@ resource "aws_lb" "main" {
 resource "aws_lb_target_group" "main" {
   name     = "${var.env_code}-target-group"
   port     = 80 #on instances
-  protocol = "HTTP" 
+  protocol = "HTTP"
   vpc_id   = var.vpc_id #using variables from module config
 
   health_check {
@@ -65,7 +65,7 @@ resource "aws_lb_target_group" "main" {
 
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
-  port              = 80 #443
+  port              = 80     #443
   protocol          = "HTTP" #"HTTPS"
   # certificate_arn   = aws_acm_certificate.main.arn #as a part of ACM implementation
   # ssl_policy        = "ELBSecurityPolicy-2016-00" #as a part of ACM implementation
@@ -107,7 +107,7 @@ resource "aws_lb_listener" "main" {
 #       type   = dvo.resource_record_type
 #     } 
 #   }
-  
+
 #   allow_overwrite = true
 #   name            = each.value.name
 #   records         = [each.value.record]

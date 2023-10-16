@@ -58,7 +58,7 @@ resource "aws_launch_configuration" "main" {
   user_data            = file("${path.module}/user_data.sh")
   iam_instance_profile = aws_iam_instance_profile.main.name #as a part of implementing Session Manager
   #key_name        = "main" #as a part of implementing Session Manager
-  
+
 }
 
 resource "aws_autoscaling_group" "main" {
@@ -73,11 +73,11 @@ resource "aws_autoscaling_group" "main" {
 
   #adding tags on instances that is lauching
   tag {
-      key                 = "Name"
-      value               = var.env_code
-      propagate_at_launch = true
-    }
-    # Add more tags if needed
+    key                 = "Name"
+    value               = var.env_code
+    propagate_at_launch = true
+  }
+  # Add more tags if needed
 }
 
 
