@@ -4,11 +4,11 @@ data "aws_secretsmanager_secret" "rds_password" {
 }
 
 data "aws_secretsmanager_secret_version" "rds_password" {
-    secret_id = data.aws_secretsmanager_secret.rds_password.id
+  secret_id = data.aws_secretsmanager_secret.rds_password.id
 }
 #password will be decoded, to decode use
 locals {
-    rds_password = jsondecode(data.aws_secretsmanager_secret_version.rds_password.secret_string)["password"]
+  rds_password = jsondecode(data.aws_secretsmanager_secret_version.rds_password.secret_string)["password"]
 }
 
 module "rds" {
