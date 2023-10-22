@@ -7,8 +7,8 @@ resource "docker_image" "php-httpd-image" {
   name = "php-httpd:challenge"
   build {
     path = "./lamp_stack/php_httpd"
-  label = {
-    challenge = "second"
+    label = {
+      challenge = "second"
     }
   }
 }
@@ -23,8 +23,8 @@ resource "docker_image" "mariadb-image" {
   name = "mariadb:challenge"
   build {
     path = "lamp_stack/custom_db"
-  label = {
-    challenge = "second"
+    label = {
+      challenge = "second"
     }
   }
 }
@@ -57,9 +57,9 @@ resource "docker_network" "private_network" {
 
 
 resource "docker_container" "php-httpd" {
-  name         = "webserver"
-  image        = docker_image.php-httpd-image.name
-  hostname     = "php-httpd"
+  name     = "webserver"
+  image    = docker_image.php-httpd-image.name
+  hostname = "php-httpd"
   networks_advanced {
     name = docker_network.private_network.id
   }
@@ -92,9 +92,9 @@ resource "docker_container" "php-httpd" {
 #Explicitly specify a dependency on mariadb terraform resource
 
 resource "docker_container" "phpmyadmin" {
-  name         = "db_dashboard"
-  image        = "phpmyadmin/phpmyadmin"
-  hostname     = "phpmyadmin"
+  name     = "db_dashboard"
+  image    = "phpmyadmin/phpmyadmin"
+  hostname = "phpmyadmin"
   networks_advanced {
     name = docker_network.private_network.id
   }
@@ -133,9 +133,9 @@ resource "docker_volume" "mariadb_volume" {
 
 
 resource "docker_container" "mariadb" {
-  name         = "db"
-  image        = docker_image.mariadb-image.name
-  hostname     = "db"
+  name     = "db"
+  image    = docker_image.mariadb-image.name
+  hostname = "db"
   networks_advanced {
     name = docker_network.private_network.id
   }

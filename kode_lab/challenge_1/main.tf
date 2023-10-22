@@ -58,7 +58,7 @@ resource "kubernetes_service" "webapp-service" {
   }
   spec {
     selector = {
-       name = kubernetes_deployment.frontend.spec.0.template.0.metadata.0.labels.name
+      name = kubernetes_deployment.frontend.spec.0.template.0.metadata.0.labels.name
     }
     port {
       port        = 8080

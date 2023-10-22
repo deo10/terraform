@@ -19,12 +19,12 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "aws_eks_cluster" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role = aws_iam_role.cluster.name
+  role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role_policy_attachment" "aws_eks_service" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role = aws_iam_role.cluster.name
+  role       = aws_iam_role.cluster.name
 }
 
 resource "aws_iam_role" "managed_nodes" {
@@ -36,7 +36,7 @@ resource "aws_iam_role" "managed_nodes" {
       {
         Action = "sts:AssumeRole"
         Effect = "Allow"
-        Sid = ""
+        Sid    = ""
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -47,15 +47,15 @@ resource "aws_iam_role" "managed_nodes" {
 
 resource "aws_iam_role_policy_attachment" "aws_eks_worker_node" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role = aws_iam_role.managed_nodes.name
+  role       = aws_iam_role.managed_nodes.name
 }
 
 resource "aws_iam_role_policy_attachment" "aws_ec2_container_registry" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPolicy"
-  role = aws_iam_role.managed_nodes.name
+  role       = aws_iam_role.managed_nodes.name
 }
 
 resource "aws_iam_role_policy_attachment" "aws_eks_cni" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role = aws_iam_role.managed_nodes.name
+  role       = aws_iam_role.managed_nodes.name
 }

@@ -15,15 +15,15 @@ module "vpc" {
   enable_nat_gateway = true
 
   private_subnet_tags = {
-    "name" = "private"
+    "name"                                      = "private"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/role/internal-elb"           = "1"
   }
 
   public_subnet_tags = {
-    "name" = "public"
+    "name"                                      = "public"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-    "kubernetes.io/role/elb" = "1"
+    "kubernetes.io/role/elb"                    = "1"
   }
 }
 
