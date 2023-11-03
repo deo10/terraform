@@ -72,13 +72,19 @@ module "elb" {
     }
   ]
 
-  https_listeners = [
+  listeners = [
     {
       port               = 443
       protocol           = "HTTPS"
       certificate_arn    = module.acm.acm_certificate_arn
       action_type        = "forward"
       target_group_index = 0
+
+      fixed_response = {
+        content_type = "text/plain"
+        status_code  = "200"
+        content      = ""
+      }
     }
   ]
 }
