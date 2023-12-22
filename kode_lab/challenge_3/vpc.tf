@@ -32,15 +32,3 @@ resource "aws_route_table_association" "public_subnet1_association" {
   subnet_id      = aws_subnet.public_subnet1.id
   route_table_id = aws_route_table.public_route_table1.id
 }
-
-
-# Create the NAT gateways
-resource "aws_nat_gateway" "nat_gateway1" {
-  allocation_id = aws_eip.nat_eip1.id
-  subnet_id     = aws_subnet.public_subnet1.id
-}
-
-# Create the Elastic IPs for the NAT gateways
-resource "aws_eip" "nat_eip1" {
-  domain = "vpc"
-}
