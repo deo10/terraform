@@ -1,14 +1,14 @@
 variable "ami" {
   type    = string
-  default = "ami-06178cf087598769c"
+  default = "ami-079db87dc4c10ac91"
 }
 
 variable "region" {
   type    = string
-  default = "eu-west-2"
+  default = "us-east-1"
 }
 
 variable "instance_type" {
   type    = string
-  default = "m5.large"
+  default = "t2.micro"
 }
