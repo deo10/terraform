@@ -32,6 +32,7 @@ resource "aws_key_pair" "citadel-key" {
 resource "aws_security_group" "private" {
   name        = "SG-SHH"
   description = "Allow ssh traffic"
+  vpc_id      = aws_vpc.my_vpc.id
   
   ingress {
     description = "SSH from VPC"
@@ -51,6 +52,7 @@ resource "aws_instance" "citadel" {
   instance_type = var.instance_type
   key_name      = aws_key_pair.citadel-key.key_name
   vpc_security_group_ids = [aws_security_group.private.id]
+  subnet_id = aws_subnet.public_subnet1.id
   user_data     = file("install-nginx.sh")
 
   tags = {
