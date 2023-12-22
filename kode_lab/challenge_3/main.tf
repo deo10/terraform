@@ -26,14 +26,31 @@
 
 resource "aws_key_pair" "citadel-key" {
   key_name   = "citadel"
-  public_key = file("/root/terraform-challenges/project-citadel/.ssh/ec2-connect-key.pub")
+  public_key = file("/root/.ssh/citadel.pub")
 }
 
+resource "aws_security_group" "private" {
+  name        = "SG-SHH"
+  description = "Allow ssh traffic"
+  
+  ingress {
+    description = "SSH from VPC"
+    from_port   = 22 #Adding a port range from to
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  } 
+  
+  tags = {
+    Name = "SG-SSH"
+  }
+}
 
 resource "aws_instance" "citadel" {
   ami           = var.ami
   instance_type = var.instance_type
   key_name      = aws_key_pair.citadel-key.key_name
+  vpc_security_group_ids = [aws_security_group.private.id]
   user_data     = file("install-nginx.sh")
 
   tags = {
