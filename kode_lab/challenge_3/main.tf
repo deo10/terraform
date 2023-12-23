@@ -29,45 +29,13 @@ resource "aws_key_pair" "citadel-key" {
   public_key = file("/root/.ssh/citadel.pub")
 }
 
-resource "aws_security_group" "public" {
-  name        = "SG-SSH"
-  description = "Allow ssh traffic"
-  vpc_id      = aws_vpc.my_vpc.id
-  
-  ingress {
-    description = "SSH from VPC"
-    from_port   = 22 #Adding a port range from to
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  } 
-  
-  # Outbound rules for ICMP traffic
-  egress {
-    from_port   = 8 // ICMP Type 8 (ping) - Echo Request
-    to_port     = 0
-    protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"] // Allow ICMP egress traffic to all destinations
-  }
 
-  # Outbound rules for all TCP traffic
-  egress {
-    from_port   = 0 // Allow all source ports
-    to_port     = 65535 // Allow all destination ports
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] // Allow all TCP egress traffic to all destinations
-  }
-
-  tags = {
-    Name = "SG-SSH-ICMP-TCP"
-  }
-}
 
 resource "aws_instance" "citadel" {
   ami           = var.ami
   instance_type = var.instance_type
   key_name      = aws_key_pair.citadel-key.key_name
-  vpc_security_group_ids = [aws_security_group.private.id]
+  vpc_security_group_ids = [aws_security_group.public.id]
   subnet_id = aws_subnet.public_subnet1.id
   user_data     = file("install-nginx.sh")
 
