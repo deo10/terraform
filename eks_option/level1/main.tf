@@ -1,3 +1,5 @@
+#link to the youtube video
+#https://youtu.be/xguBEq3bq_k
 
 data "aws_availability_zones" "available" { #taking all available AZ from the region that is mentioned in provider.tf
   state = "available"
@@ -5,7 +7,7 @@ data "aws_availability_zones" "available" { #taking all available AZ from the re
 
 #creating VPC using open source modules - https://github.com/terraform-aws-modules
 module "vpc" {
-  source = "terraform-aws-modules/vps/aws"
+  source = "terraform-aws-modules/vpc/aws"
 
   name               = "${var.env_code}-vpc"
   cidr               = var.vpc_cidr
