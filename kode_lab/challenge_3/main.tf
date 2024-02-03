@@ -45,7 +45,7 @@ resource "aws_instance" "citadel" {
 }
 
 resource "aws_eip" "citadel_eip" {
-  vpc      = true
+  domain   = "vpc"
   instance = aws_instance.citadel.id
   
   provisioner "local-exec" {
