@@ -49,6 +49,6 @@ resource "aws_eip" "citadel_eip" {
   instance = aws_instance.citadel.id
   
   provisioner "local-exec" {
-    command = "echo ${self.public_dns} >> /root/citadel_public_dns.txt"
+    command = "echo ssh -i ~/.ssh/citadel ec2-user@${self.public_dns} >> /root/citadel_public_dns.txt"
   }
 }
