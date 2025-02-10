@@ -8,9 +8,10 @@ provider "aws" {
   secret_key = ""
 }
 
-resource "aws_instance" "ec2_instance" {
-  ami           = "ami-01b799c439fd5516a"
-  instance_type = "t2.micro"
+# Create the EC2 with variables
+resource "aws_instance" "web" {
+  instance_type = var.instance_type
+  ami = var.ami
 }
 
 # Run terraform init to download the AWS provider plugin
